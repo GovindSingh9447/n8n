@@ -34,3 +34,14 @@ jobs:
       - name: Deploy to n8n Server
         run: |
           docker-compose -f docker-compose.yml up -d
+          
+     - name: Deploy to EC2
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY_PATH }} ubuntu@13.232.212.71 'bash -s' << 'ENDSSH'
+          docker pull ranawattech/n8n:b316f6dc5f11648afcf9572846f88054e6054733
+          docker stop ranawattech/n8n || true
+          docker rm ranawattech/n8n || true
+          docker run -d -p 80:80 --name ranawattech/n8n ranawattech/n8n:b316f6dc5f11648afcf9572846f88054e6054733
+         ENDSSH
+          env:
+        SSH_PRIVATE_KEY_PATH: ${{ secrets.SSH_PRIVATE_KEY_PATH }}  
