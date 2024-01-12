@@ -17,7 +17,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: your-docker-registry/your-repo:latest
+        tags: ranawattech/n8n:tagname
 
     - name: Deploy to n8n Server
       run: |
