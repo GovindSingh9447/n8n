@@ -37,12 +37,12 @@ jobs:
           docker-compose -f docker-compose.yml up -d
 
       - name: Deploy to EC2
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY_PATH }} ubuntu@13.232.212.71 'bash -s' << 'ENDSSH'
-            docker pull ranawattech/n8n:${{ github.sha }}
-            docker stop ranawattech/n8n || true
-            docker rm ranawattech/n8n || true
-            docker run -d -p 80:80 --name ranawattech/n8n ranawattech/n8n:${{ github.sha }}
-          ENDSSH
-        env:
-          SSH_PRIVATE_KEY_PATH: ${{ secrets.SSH_PRIVATE_KEY_PATH }}
+  run: |
+    ssh -i ${{ secrets.SSH_PRIVATE_KEY_PATH }} ubuntu@13.232.212.71 'bash -s' << 'ENDSSH'
+      docker pull ranawattech/n8n:${{ github.sha }}
+      docker stop ranawattech/n8n || true
+      docker rm ranawattech/n8n || true
+      docker run -d -p 80:80 --name ranawattech/n8n ranawattech/n8n:${{ github.sha }}
+    ENDSSH
+  env:
+    SSH_PRIVATE_KEY_PATH: ${{ secrets.SSH_PRIVATE_KEY_PATH }}
