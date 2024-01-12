@@ -18,6 +18,9 @@ jobs:
       with:
         push: true
         tags: ranawattech/n8n:tagname
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Deploy to n8n Server
       run: |
