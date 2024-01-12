@@ -1,2 +1,2 @@
 # n8n
-n8n CI/CD via GitHub
+n8n CI/CD via  GitHub
