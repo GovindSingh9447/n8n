@@ -1,0 +1,120 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n
+      POSTGRES_DB: n8n
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    restart: always
+    volumes:
+      - redis-data:/data
+
+  n8n:
+    image: n8nio/n8n:latest  # Specify the version here
+    restart: always
+    command: n8n start
+    ports:
+      - "5678:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      N8N_METRICS: 'true'
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+      EXECUTIONS_PROCESS: "main"
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      N8N_BASIC_AUTH_ACTIVE: 'true'
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: password
+      GENERIC_TIMEZONE: 'UTC'
+      #WEBHOOK_TUNNEL_URL: 'http://172.233.152.4:5678/'
+      WEBHOOK_TUNNEL_URL: 'http://manage.magicallygenius.ai/'
+      DEBUG: "*"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - n8n-data:/home/node/.n8n
+
+  n8n-worker-1:
+    image: n8nio/n8n:latest  # Specify the version here
+    restart: always
+    command: n8n worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      N8N_METRICS: 'true'  
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+      EXECUTIONS_PROCESS: "own"
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      DEBUG: "*"
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - n8n-worker-data-1:/home/node/.n8n
+
+  n8n-worker-2:
+    image: n8nio/n8n:latest  # Specify the version here
+    restart: always
+    command: n8n worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      N8N_METRICS: 'true'  
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+      EXECUTIONS_PROCESS: "own"
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      DEBUG: "*"
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - n8n-worker-data-2:/home/node/.n8n
+
+  n8n-worker-3:
+    image: n8nio/n8n:latest   # Specify the version here
+    restart: always
+    command: n8n worker
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      N8N_METRICS: 'true'  
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+      EXECUTIONS_PROCESS: "own"
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      DEBUG: "*"
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - n8n-worker-data-3:/home/node/.n8n
+
+volumes:
+  postgres-data:
+  redis-data:
+  n8n-data:
+  n8n-worker-data-1:
+  n8n-worker-data-2:
+  n8n-worker-data-3:
